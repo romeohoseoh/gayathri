@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A Message From a Stranger</title>
+  <style>
+    :root{
+      --bg1:#ffe6f0;
+      --bg2:#fff0f6;
+      --card:#ffffffee;
+      --accent:#ff5c8a;
+      --muted:#6b6b6b;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif}
+    body{
+      background: linear-gradient(160deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;padding:24px;
+    }
+    .wrap{position:relative;width:100%;max-width:820px;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.12)}
+
+    /* background photo (faded) */
+    .bg-photo{
+      position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(6px) brightness(0.6) saturate(0.95);transform:scale(1.02);
+    }
+
+    /* subtle overlay to make text readable */
+    .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.06));}
+
+    .card{position:relative;padding:36px 28px;display:flex;flex-direction:column;align-items:center;gap:18px;background:var(--card)}
+
+    h1{margin:0;font-size:28px;color:var(--accent);text-align:center}
+    .typewriter{display:inline-block;overflow:hidden;border-right:.12em solid rgba(0,0,0,0.08);white-space:nowrap;letter-spacing:.03em;animation:typing 2.6s steps(40,end) forwards, blink .8s infinite;color:var(--accent);font-weight:700}
+    @keyframes typing{from{width:0}to{width:100%}}@keyframes blink{50%{border-color:transparent}}
+
+    p.lead{margin:0;color:#2b2b2b;text-align:center;font-size:18px;line-height:1.6;max-width:720px}
+
+    .letter{margin-top:6px;font-size:16px;color:var(--accent);text-decoration:underline;cursor:pointer;opacity:0.95}
+
+    #messageBox{display:none;background:rgba(255,255,255,0.9);padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.06);max-width:720px;color:#222}
+
+    .controls{display:flex;gap:12px;align-items:center;margin-top:6px}
+    .btn{background:var(--accent);color:white;padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .muted{background:transparent;color:var(--muted);padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)}
+
+    /* sparkles */
+    #sparkles{pointer-events:none;position:absolute;inset:0;overflow:hidden}
+    .sparkle{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffd6ec 40%,transparent 60%);filter:blur(.6px);opacity:.95;animation:sfall linear forwards}
+    @keyframes sfall{to{transform:translateY(120vh) scale(.6);opacity:0}}
+
+    /* responsive image preview for editing */
+    .photo-thumb{width:120px;height:120px;border-radius:10px;object-fit:cover;box-shadow:0 8px 24px rgba(0,0,0,0.08)}
+
+    footer{margin-top:10px;color:var(--muted);font-size:13px}
+
+    @media (max-width:520px){.card{padding:20px}.typewriter{font-size:20px}p.lead{font-size:16px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Put your image file named exactly 'gayathri.jpg' in the repository root -->
+    <div class="bg-photo" id="bgPhoto" style="background-image:url('gayathri.jpg')"></div>
+    <div class="overlay"></div>
+
+    <div class="card">
+      <h1 class="typewriter">Happy Birthday Gayathri 🎉</h1>
+
+      <p class="lead">I hope today brings you all the happiness you deserve. Wherever life takes you, I wish you peace, love and success.</p>
+
+      <p class="letter" id="letterBtn" onclick="showMessage()">💌 A small message from me — tap to read</p>
+
+      <div id="messageBox">
+        <p style="margin:0 0 8px 0">Thank you for being an important chapter in my life.<br><br>
+        I truly wish you all the happiness and success ahead. Wherever life takes us, I will always wish you well and remember you with respect.<br><br>
+        Happy Birthday, Gayathri 🌷</p>
+        <div style="display:flex;justify-content:center;margin-top:12px"><button class="btn" onclick="closeMessage()">Take care</button></div>
+      </div>
+
+      <div class="controls">
+        <img id="thumb" class="photo-thumb" src="gayathri.jpg" alt="Gayathri photo">
+        <div style="text-align:left">
+          <div style="font-weight:700;color:var(--accent)">A Message From a Stranger</div>
+          <div style="font-size:13px;color:var(--muted)">Sent with respect — no expectations</div>
+        </div>
+      </div>
+
+      <footer>Tap anywhere to start music & interactions</footer>
+    </div>
+
+    <div id="sparkles"></div>
+  </div>
+
+  <!-- Piano music; will start on first user interaction (required by mobile browsers) -->
+  <audio id="bgAudio" src="https://cdn.pixabay.com/download/audio/2023/03/06/audio_8a225e0e83.mp3?filename=beautiful-piano-145009.mp3" preload="auto"></audio>
+
+  <script>
+    // sparkles
+    function createSparkle(){
+      const s = document.createElement('div'); s.className='sparkle';
+      const size = 4 + Math.random()*10; s.style.width=size+'px'; s.style.height=size+'px';
+      s.style.left = Math.random()*100 + 'vw';
+      s.style.top = (-10 - Math.random()*50)+'px';
+      s.style.animationDuration = 6 + Math.random()*8 + 's';
+      document.getElementById('sparkles').appendChild(s);
+      setTimeout(()=> s.remove(), 14000);
+    }
+    setInterval(createSparkle,600);
+
+    // audio play on first tap
+    const audio = document.getElementById('bgAudio');
+    function onFirstTap(){ audio.volume = 0.35; audio.play().catch(()=>{}); document.removeEventListener('click', onFirstTap); }
+    document.addEventListener('click', onFirstTap);
+
+    // reveal message
+    function showMessage(){ document.getElementById('messageBox').style.display='block'; window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }
+    function closeMessage(){ document.getElementById('messageBox').style.display='none'; }
+
+    // ensure background fallback if image missing
+    const bg = document.getElementById('bgPhoto');
+    const imgTest = new Image(); imgTest.src = 'gayathri.jpg';
+    imgTest.onload = ()=>{ bg.style.backgroundImage = "url('gayathri.jpg')" }
+    imgTest.onerror = ()=>{ bg.style.backgroundImage = "linear-gradient(120deg,#ffdfe8,#fff3f8)" }
+  </script>
+</body>
+</html>
